@@ -9,10 +9,14 @@ use std::io::stdin;
 
 fn main() {
     // Roll and score the dice until told not to.
-    roll();
+    let mut between = Range::new(1u16, 7);
+    let mut rng = rand::thread_rng();
+    let num_rolls = 6;
+
+    roll(num_rolls, &mut rng, &mut between);
 
     while cont() {
-        roll();
+        roll(num_rolls, &mut rng, &mut between);
     }
 }
 
@@ -29,12 +33,8 @@ fn cont() -> bool {
     }
 }
 
-fn roll() {
+fn roll<R: Rng>(num_rolls: u16, mut rng: &mut R, mut between: &mut Range<u16>) {
     // Roll and score a set of dice.
-    let mut between = Range::new(1u16, 7);
-    let mut rng = rand::thread_rng();
-    let num_rolls = 6;
-
     let dice = roll_dice(num_rolls, &mut rng, &mut between);
 
     print_dice(&dice);
@@ -67,12 +67,12 @@ fn score_die(die: &u16) -> u16 {
 }
 
 fn roll_dice<R: Rng>(num_rolls: u16, mut rng: &mut R, mut between: &mut Range<u16>) -> Vec<u16> {
-    // Roll a set of dice using provided Rng.
+    // Roll a set of dice using provided Rng and range.
     c![roll_die(&mut rng, &mut between), for _i in 0..num_rolls]
 }
 
 fn roll_die<R: Rng>(mut rng: &mut R, between: &mut Range<u16>) -> u16 {
-    // Roll a single die using provided Rng.
+    // Roll a single die using provided Rng and range.
     between.sample(&mut rng)
 }
 
